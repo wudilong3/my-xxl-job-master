@@ -313,13 +313,10 @@ public class XxlJobServiceImpl implements XxlJobService {
 		if (xxlJobInfo == null) {
 			return ReturnT.SUCCESS;
 		}
-
-		String[] childJobIds = xxlJobInfo.getChildJobId().split(",");
-		Date triggerTime = new Date();
 		Map map = new HashMap();
 		//四小时的时间
-		map.put("triggerTime",DateUtil.addHours(triggerTime,-4));
-		map.put("list",Arrays.asList(childJobIds));
+		map.put("triggerTime",DateUtil.addHours(new Date(),-4));
+		map.put("list",Arrays.asList(xxlJobInfo.getChildJobId().split(",")));
 		List<XxlJobLog> childxxlJobLogs = xxlJobLogDao.loadByIds(map);
 		//todo  childxxlJobLogs child表中记录数减一
 		xxlJobInfoDao.delete(id);
