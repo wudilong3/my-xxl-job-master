@@ -49,5 +49,7 @@ public interface XxlJobInfoDao {
 
 	public int parentSub(List<String> childIds);
 
+	public List<XxlJobInfo> loadByIds(List<String> childIds);
+
 
 }

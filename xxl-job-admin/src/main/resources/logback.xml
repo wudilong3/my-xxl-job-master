@@ -21,8 +21,14 @@
         </encoder>
     </appender>
 
+<!--    <loggers>-->
+        <Logger name="com.xxl.job.admin.dao.XxlJobLogDao" level="trace" />
+<!--        <root level="info">-->
+<!--            <appender-ref ref="Console"/>-->
+<!--        </root>-->
+<!--    </loggers>-->
     <root level="info">
-        <appender-ref ref="console"/>
+        <appender-ref ref="console"/>w
         <appender-ref ref="file"/>
     </root>
 

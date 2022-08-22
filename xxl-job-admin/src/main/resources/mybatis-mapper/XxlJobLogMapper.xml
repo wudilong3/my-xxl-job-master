@@ -258,6 +258,16 @@
 				AND t.trigger_time <![CDATA[ <= ]]> #{losedTime}
 				AND t2.id IS NULL;
 	</select>
+
+	<select id="loadByIds" parameterType="map" resultMap="XxlJobLog">
+		SELECT <include refid="Base_Column_List" />
+		FROM xxl_job_log AS t
+		WHERE
+		t.trigger_time <![CDATA[ >= ]]> #{triggerTime} and
+		<foreach item="item" index="index" collection="list" open="(" separator="or" close=")">
+			t.id = #{item}
+		</foreach>
+	</select>
 	<!--
 	SELECT t.id
 	FROM xxl_job_log AS t

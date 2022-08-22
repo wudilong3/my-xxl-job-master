@@ -251,4 +251,13 @@
 		</foreach>
 	</update>
 
+	<select id="loadByIds" parameterType="list" resultMap="XxlJobInfo">
+		SELECT <include refid="Base_Column_List" />
+		FROM xxl_job_info AS t
+		WHERE
+		<foreach item="item" index="index" collection="list" open="(" separator="or" close=")">
+			t.id = #{item}
+		</foreach>
+	</select>
+
 </mapper>

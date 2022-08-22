@@ -3,6 +3,7 @@ package com.xxl.job.admin.service.impl;
 import com.xxl.job.admin.core.cron.CronExpression;
 import com.xxl.job.admin.core.model.XxlJobGroup;
 import com.xxl.job.admin.core.model.XxlJobInfo;
+import com.xxl.job.admin.core.model.XxlJobLog;
 import com.xxl.job.admin.core.model.XxlJobLogReport;
 import com.xxl.job.admin.core.route.ExecutorRouteStrategyEnum;
 import com.xxl.job.admin.core.scheduler.MisfireStrategyEnum;
@@ -313,6 +314,14 @@ public class XxlJobServiceImpl implements XxlJobService {
 			return ReturnT.SUCCESS;
 		}
 
+		String[] childJobIds = xxlJobInfo.getChildJobId().split(",");
+		Date triggerTime = new Date();
+		Map map = new HashMap();
+		//四小时的时间
+		map.put("triggerTime",DateUtil.addHours(triggerTime,-4));
+		map.put("list",Arrays.asList(childJobIds));
+		List<XxlJobLog> childxxlJobLogs = xxlJobLogDao.loadByIds(map);
+		//todo  childxxlJobLogs child表中记录数减一
 		xxlJobInfoDao.delete(id);
 		xxlJobLogDao.delete(id);
 		xxlJobLogGlueDao.deleteByJobId(id);
