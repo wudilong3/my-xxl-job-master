@@ -28,7 +28,7 @@
 <!--        </root>-->
 <!--    </loggers>-->
     <root level="info">
-        <appender-ref ref="console"/>w
+        <appender-ref ref="console"/>
         <appender-ref ref="file"/>
     </root>
 
