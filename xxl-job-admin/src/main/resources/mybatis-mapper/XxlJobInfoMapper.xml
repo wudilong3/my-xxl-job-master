@@ -260,4 +260,13 @@
 		</foreach>
 	</select>
 
+	<select id="loadPrentCountById" parameterType="list" resultMap="Map">
+		SELECT id,prent_count
+		FROM xxl_job_info AS t
+		WHERE
+		<foreach collection="list" index = "index" item="item" open="(" separator="or" close=")">
+			t.id = #{item.id}
+		</foreach>
+	</select>
+
 </mapper>

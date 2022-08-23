@@ -5,6 +5,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -51,5 +52,6 @@ public interface XxlJobInfoDao {
 
 	public List<XxlJobInfo> loadByIds(List<String> childIds);
 
+	public List<Map> loadPrentCountById(List list);
 
 }

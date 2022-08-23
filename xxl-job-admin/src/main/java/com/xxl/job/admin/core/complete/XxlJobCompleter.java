@@ -3,15 +3,18 @@ package com.xxl.job.admin.core.complete;
 import com.xxl.job.admin.core.conf.XxlJobAdminConfig;
 import com.xxl.job.admin.core.model.XxlJobInfo;
 import com.xxl.job.admin.core.model.XxlJobLog;
+import com.xxl.job.admin.core.model.XxlJobLogChild;
 import com.xxl.job.admin.core.thread.JobTriggerPoolHelper;
 import com.xxl.job.admin.core.trigger.TriggerTypeEnum;
 import com.xxl.job.admin.core.util.I18nUtil;
 import com.xxl.job.core.biz.model.ReturnT;
 import com.xxl.job.core.context.XxlJobContext;
+import com.xxl.job.core.util.DateUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.text.MessageFormat;
+import java.util.*;
 
 /**
  * @author xuxueli 2020-10-30 20:43:10
@@ -53,20 +56,60 @@ public class XxlJobCompleter {
                 triggerChildMsg = "<br><br><span style=\"color:#00c0ef;\" > >>>>>>>>>>>"+ I18nUtil.getString("jobconf_trigger_child_run") +"<<<<<<<<<<< </span><br>";
 
                 String[] childJobIds = xxlJobInfo.getChildJobId().split(",");
+
+
+                Map map = new HashMap();
+                map.put("updateTime",DateUtil.addHours(new Date(),-4).getTime());
+                map.put("list",Arrays.asList(childJobIds));
+
+
+                List<XxlJobLogChild> xxlJobLogChildList = XxlJobAdminConfig.getAdminConfig().getXxlJobLogChildDao().findByTimeAndChildId(map);
+                List<Map> xxlJobInfos = XxlJobAdminConfig.getAdminConfig().getXxlJobInfoDao().loadPrentCountById(Arrays.asList(childJobIds));
+
+                Map temMap = new HashMap();
+                for (XxlJobLogChild xxlJobLogChild: xxlJobLogChildList){
+                    temMap.put(xxlJobLogChild.getChildJobId(),xxlJobLogChild.getPrentCount());
+                }
+                List<XxlJobLogChild> addXxlJobLogChildList = new ArrayList<>();
+                Map resMap = new HashMap();
+                for (Map map1 :xxlJobInfos){
+                    if (temMap.get(map1.get("id"))==null){
+                        resMap.put(map1.get("id"),false);
+                        XxlJobLogChild temXxl = new XxlJobLogChild();
+                        temXxl.setChildJobId((Integer) map1.get("id"));
+                        temXxl.setUpdateTime(new Date().getTime());
+                        addXxlJobLogChildList.add(temXxl);
+                    }else {
+                        if (temMap.get(map1.get("id")) == map1.get("prent_count")){
+                            resMap.put(map1.get("id"),true);
+                        } else {
+                            resMap.put(map1.get("id"),false);
+                        }
+                    }
+
+                }
+
                 for (int i = 0; i < childJobIds.length; i++) {
                     int childJobId = (childJobIds[i]!=null && childJobIds[i].trim().length()>0 && isNumeric(childJobIds[i]))?Integer.valueOf(childJobIds[i]):-1;
                     if (childJobId > 0) {
 
-                        JobTriggerPoolHelper.trigger(childJobId, TriggerTypeEnum.PARENT, -1, null, null, null);
-                        ReturnT<String> triggerChildResult = ReturnT.SUCCESS;
+                        if ((Boolean) resMap.get("childJobId")) {
+                            JobTriggerPoolHelper.trigger(childJobId, TriggerTypeEnum.PARENT, -1, null, null, null);
+                            ReturnT<String> triggerChildResult = ReturnT.SUCCESS;
 
-                        // add msg
-                        triggerChildMsg += MessageFormat.format(I18nUtil.getString("jobconf_callback_child_msg1"),
-                                (i+1),
-                                childJobIds.length,
-                                childJobIds[i],
-                                (triggerChildResult.getCode()==ReturnT.SUCCESS_CODE?I18nUtil.getString("system_success"):I18nUtil.getString("system_fail")),
-                                triggerChildResult.getMsg());
+                            // add msg
+                            triggerChildMsg += MessageFormat.format(I18nUtil.getString("jobconf_callback_child_msg1"),
+                                    (i + 1),
+                                    childJobIds.length,
+                                    childJobIds[i],
+                                    (triggerChildResult.getCode() == ReturnT.SUCCESS_CODE ? I18nUtil.getString("system_success") : I18nUtil.getString("system_fail")),
+                                    triggerChildResult.getMsg());
+                        }else {
+                            triggerChildMsg += MessageFormat.format("父任务未全部完成",
+                                    (i+1),
+                                    childJobIds.length,
+                                    childJobIds[i]);
+                        }
                     } else {
                         triggerChildMsg += MessageFormat.format(I18nUtil.getString("jobconf_callback_child_msg2"),
                                 (i+1),
@@ -74,6 +117,13 @@ public class XxlJobCompleter {
                                 childJobIds[i]);
                     }
                 }
+
+
+                Map map1 = new HashMap();
+                map.put("newTime",new Date().getTime());
+                map.put("list",xxlJobLogChildList);
+                XxlJobAdminConfig.getAdminConfig().getXxlJobLogChildDao().updateByTimeAndChildId(map1);
+                XxlJobAdminConfig.getAdminConfig().getXxlJobLogChildDao().insertByTimeAndChildId(addXxlJobLogChildList);
 
             }
         }

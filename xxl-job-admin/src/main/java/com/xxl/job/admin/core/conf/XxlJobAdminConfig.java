@@ -78,6 +78,8 @@ public class XxlJobAdminConfig implements InitializingBean, DisposableBean {
     @Resource
     private XxlJobGroupDao xxlJobGroupDao;
     @Resource
+    private XxlJobLogChildDao xxlJobLogChildDao;
+    @Resource
     private XxlJobLogReportDao xxlJobLogReportDao;
     @Resource
     private JavaMailSender mailSender;
@@ -137,6 +139,10 @@ public class XxlJobAdminConfig implements InitializingBean, DisposableBean {
 
     public XxlJobGroupDao getXxlJobGroupDao() {
         return xxlJobGroupDao;
+    }
+
+    public XxlJobLogChildDao getXxlJobLogChildDao() {
+        return xxlJobLogChildDao;
     }
 
     public XxlJobLogReportDao getXxlJobLogReportDao() {

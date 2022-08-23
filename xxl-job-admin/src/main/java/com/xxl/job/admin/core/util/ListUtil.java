@@ -1,5 +1,7 @@
 package com.xxl.job.admin.core.util;
 
+import com.xxl.job.admin.core.model.XxlJobLogChild;
+
 import java.util.*;
 
 public class ListUtil {
@@ -40,4 +42,30 @@ public class ListUtil {
         retMap.put("subChildIds",subChildIds);
         return retMap;
     }
+
+//        public static Map <String,List<String>> getDiffrent(List<XxlJobLogChild>  xxlJobLogChildList,
+//                                                            List<Map>  xxlJobInfos){
+//        Map temMap = new HashMap();
+//        for (XxlJobLogChild xxlJobLogChild: xxlJobLogChildList){
+//            temMap.put(xxlJobLogChild.getChildJobId(),xxlJobLogChild.getPrentCount());
+//        }
+//        List<XxlJobLogChild> addXxlJobLogChildList = new ArrayList<>();
+//        Map resMap = new HashMap();
+//        for (Map map1 :xxlJobInfos){
+//            if (temMap.get(map1.get("id"))==null){
+//                resMap.put(map1.get("id"),false);
+//                XxlJobLogChild temXxl = new XxlJobLogChild();
+//                temXxl.setChildJobId((Integer) map1.get("id"));
+//                temXxl.setUpdateTime(new Date().getTime());
+//                addXxlJobLogChildList.add(temXxl);
+//            }else {
+//                if (temMap.get(map1.get("id")) == map1.get("prent_count")){
+//                    resMap.put(map1.get("id"),true);
+//                } else {
+//                    resMap.put(map1.get("id"),false);
+//                }
+//            }
+//
+//        }
+//    }
 }
